@@ -11,7 +11,8 @@ void main()
 	//optimizedBubbleSort(arr, size);
 	//selectSort(arr, size);
 	//insertSort(arr, size);
-	quickSort(arr, 0, size - 1);
+	//quickSort(arr, 0, size - 1);
+	heapSort(arr, size);
 	show(arr, size);
 
 	system("pause");

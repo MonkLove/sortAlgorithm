@@ -81,14 +81,14 @@ int partition(int* arr, int low, int high)
 	int flag = *(arr + low);
 	while(low < high)
 	{
-		while (flag > *(arr + high) && low < high)
+		while (flag > *(arr + high) && low < high/* It is necessary*/)
 			--high;
 		if (low < high)
 		{
 			*(arr + low) = *(arr + high);
 			++low;
 		}
-		while (flag < *(arr + low) && low < high)
+		while (flag < *(arr + low) && low < high/* It is necessary*/)
 			++low;
 		if(low < high)
 		{
@@ -110,12 +110,35 @@ void quickSort(int* arr, int low, int high)
 	}
 }/* Quick sort */
 
-void heapAdjust()
+/* Heap sort*/
+void heapAdjust(int* arr, int parent, int size)
 {
-
-}
-
-void heapSort()
-{
+	int lchild = 2 * parent + 1;      /* Left child */
+	int rchild = lchild + 1;          /* Right child */
+	int flag = parent;
 	
+	if (*(arr + flag) > *(arr + lchild) && lchild < size)
+			flag = lchild;
+	if (*(arr + flag) > *(arr + rchild) && rchild < size)
+			flag = rchild;
+
+	if(flag != parent)
+	{
+		swap(arr + flag, arr + parent);
+		heapAdjust(arr, flag, size);
+	}
 }
+void heapSort(int* arr, int size)
+{
+	int parent = size / 2;
+	for (int i = parent; i >= 0; --i)
+	{
+		heapAdjust(arr, i, size);
+	}
+
+	for (int i = size; i > 0; --i)
+	{
+		swap(arr, arr + i - 1);
+		heapAdjust(arr, 0, i - 1);
+	}
+}/* Heap sort*/
