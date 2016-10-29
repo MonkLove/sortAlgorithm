@@ -10,7 +10,8 @@ void main()
 	//bubbleSort(arr, size);
 	//optimizedBubbleSort(arr, size);
 	//selectSort(arr, size);
-	insertSort(arr, size);
+	//insertSort(arr, size);
+	quickSort(arr, 0, size - 1);
 	show(arr, size);
 
 	system("pause");

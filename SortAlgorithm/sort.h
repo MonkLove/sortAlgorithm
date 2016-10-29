@@ -8,8 +8,8 @@ void insertSort(int* arr, int size);
 
 void selectSort(int* arr, int size);
 
-void partition();
-void quickSort(int* arr, int size);
+int partition(int* arr, int low, int high);
+void quickSort(int* arr, int low, int size);
 
 void heapAdjust();
 void heapSort();

@@ -75,12 +75,47 @@ void selectSort(int* arr, int size)
 	}
 }
 
-void partition()
-{}
-void quickSort(int* arr, int size)
-{}
+/* Quick sort */
+int partition(int* arr, int low, int high)
+{
+	int flag = *(arr + low);
+	while(low < high)
+	{
+		while (flag > *(arr + high) && low < high)
+			--high;
+		if (low < high)
+		{
+			*(arr + low) = *(arr + high);
+			++low;
+		}
+		while (flag < *(arr + low) && low < high)
+			++low;
+		if(low < high)
+		{
+			*(arr + high) = *(arr + low);
+			--high;
+		}
+	}
+	*(arr + low) = flag;
+	return low;
+}
+void quickSort(int* arr, int low, int high)
+{
+	int mid = 0;
+	if(low < high)
+	{
+		mid = partition(arr, low, high);
+		quickSort(arr, low, mid - 1);
+		quickSort(arr, mid + 1, high);
+	}
+}/* Quick sort */
 
 void heapAdjust()
-{}
+{
+
+}
+
 void heapSort()
-{}
+{
+	
+}
