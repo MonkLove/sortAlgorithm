@@ -1,5 +1,8 @@
 #include "sort.h"
 #include "sortutil.h"
+#include <cstdlib>
+#include <iostream>
+using namespace std;
 
 void bubbleSort(int* arr, int size)
 {
@@ -99,6 +102,7 @@ int partition(int* arr, int low, int high)
 	*(arr + low) = flag;
 	return low;
 }
+
 void quickSort(int* arr, int low, int high)
 {
 	int mid = 0;
@@ -128,6 +132,7 @@ void heapAdjust(int* arr, int parent, int size)
 		heapAdjust(arr, flag, size);
 	}
 }
+
 void heapSort(int* arr, int size)
 {
 	int parent = size / 2;
@@ -142,3 +147,82 @@ void heapSort(int* arr, int size)
 		heapAdjust(arr, 0, i - 1);
 	}
 }/* Heap sort*/
+
+#if 1
+/* Merge sort */
+void merge(int* src_arr, int* dest_arr, int start, int mid, int end)
+{
+	int iindex = start;
+	int jindex = mid + 1;
+	int tmp_start= start;
+	while (iindex <= mid  && jindex <= end)
+	{
+		if (*(src_arr + iindex) > *(src_arr + jindex))
+		{
+			dest_arr[tmp_start++] = src_arr[jindex++];
+			//++tmp_start;
+			//++jindex;
+		}
+		else
+		{
+			dest_arr[tmp_start++] = src_arr[iindex++];
+			//++tmp_start;
+			//++iindex;
+		}
+	}
+	while (iindex < mid + 1)
+		dest_arr[tmp_start++] = src_arr[iindex++];
+	while (jindex <= end)
+		dest_arr[tmp_start++] = src_arr[jindex++];
+
+	for (iindex = start; iindex <= end; ++iindex)
+		src_arr[iindex] = dest_arr[iindex];
+}
+
+void MergeSort(int* src_arr, int* dest_arr, int start, int end)
+{
+	int mid;
+	if(start < end)
+	{
+		mid = (start + end) / 2;
+		MergeSort(src_arr, dest_arr, start, mid);
+		MergeSort(src_arr, dest_arr, mid + 1, end);
+		merge(src_arr, dest_arr, start, mid, end);
+	}
+}
+
+void mergeSort(int* src_arr, int size)
+{
+	int *tmp = new int[size];
+	if (tmp == NULL)
+		return;
+	MergeSort(src_arr, tmp, 0, size - 1);
+	delete[] tmp;
+}
+/* Merge sort */
+#endif
+
+void shellSort(int* arr, int size)
+{
+	int i;
+	int gap;
+
+	for (gap = size / 2; gap > 0; gap /= 2)
+	{
+		for (i = gap; i < size; ++i)
+		{
+			if (*(arr + i) < *(arr + i - gap))
+			{
+				int temp = *(arr + i);
+				int j = i - gap;
+				while (j >= 0 && *(arr + j) > temp)
+				{
+					*(arr + j + gap) = *(arr + j);
+					j -= gap;
+				}
+				*(arr + j + gap) = temp;
+			}
+		}
+		show(arr, size);
+	}
+}
