@@ -11,10 +11,10 @@ int main()
 	//optimizedBubbleSort(arr, size);
 	//selectSort(arr, size);
 	//insertSort(arr, size);
-	//quickSort(arr, 0, size - 1);
+	//quickSort(arr, size);
 	//heapSort(arr, size);
 	//mergeSort(arr, size);
-	shellSort(arr, size);
+	//shellSort(arr, size);
 	show(arr, size);
 
 	system("pause");
