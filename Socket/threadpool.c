@@ -19,10 +19,11 @@ typedef struct Worker{
 
 typedef struct Pool{
     CThread_worker* queue_head;
+    CThread_worker* queue_tail;
     pthread_t*      pthreads;
-    uint32_t         thread_num;
-    uint32_t         queue_size;
-    uint32_t         shutdown;
+    uint32_t        thread_num;
+    uint32_t        queue_size;
+    uint32_t        shutdown;
     pthread_mutex_t queue_lock;
     pthread_cond_t  queue_ready;
 }CThread_pool;
@@ -41,6 +42,7 @@ void* pool_init(int thread_num, int queue_size)
     pool->queue_size = 0;
     pool->shutdown = 0;
     pool->queue_head = NULL;
+    pool->queue_tail = NULL;
     if(pthread_mutex_init(&(pool->queue_lock), NULL)){
         printf("Failed to init mutex\n");
         return NULL;
@@ -76,20 +78,23 @@ int pool_add_worker(void* ppool, void* (*callback)(void* arg), void* arg)
     newWork->next = NULL;
 
     pthread_mutex_lock(&(pool->queue_lock));
-    CThread_worker* member = pool->queue_head;
-    if(member != NULL){
-        while(member->next != NULL){
-            member = member->next;
-        }
-        member->next = newWork;
+    if(pool->shutdown){
+    	pthread_mutex_unlock(&(pool->queue_lock));
+    	return -1;
+    }
+
+    if(pool->queue_head == NULL){
+        pool->queue_head = newWork;
+        pool->queue_tail = newWork;
     }
     else{
-        pool->queue_head = newWork;
+        pool->queue_tail->next = newWork;
+        pool->queue_tail = newWork;
     }
     
     pool->queue_size++;
     pthread_mutex_unlock(&(pool->queue_lock));
-    pthread_cond_signal(&(pool->queue_ready));
+    pthread_cond_broadcast(&(pool->queue_ready));
     return 0;
 }
 
@@ -150,7 +155,7 @@ void* process_routine(void* arg)
     pthread_exit(NULL);
 }
 
-#if 0
+#if 1
 void* myprocess(void* arg)
 {
     printf("thread is %d, working on task %d\n", pthread_self(), *(int*)arg);
@@ -161,12 +166,14 @@ void* myprocess(void* arg)
 int main(int argc, char *argv[])
 {
     void* pool = pool_init(3, 10);
+
     int* workingnum = (int*)malloc(sizeof(int)*10);
     int i;
     for(i = 0; i < 10; i++){
         workingnum[i] = i;
         pool_add_worker(pool, myprocess ,workingnum + i);
     }
+
     sleep(5);
     pool_destroy(pool);
     free(workingnum);
